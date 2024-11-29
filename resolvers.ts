@@ -77,6 +77,7 @@ export const resolvers = {
 
             return record;
         },
+
         createCategory: async (_, args) => {
             const { category } = args;
 
@@ -84,6 +85,7 @@ export const resolvers = {
             await record.save();
             return record;
         },
+
         deleteCategory: async (_, args) => {
             const { id } = args;
             await Category.updateOne({
@@ -97,6 +99,7 @@ export const resolvers = {
                 message: "Xóa thành công!"
             };
         },
+
         updateCategory: async (_, args) => {
             const { id, category } = args;
 
@@ -110,5 +113,19 @@ export const resolvers = {
             });
             return record;
         },
+    },
+
+    Article: {
+        category: async (record) => {
+            const categoryId = record.categoryId;
+
+            const category = await Category.findOne({
+                _id: categoryId,
+                deleted: false
+            });
+            
+            return category;
+        }
     }
+
 };
