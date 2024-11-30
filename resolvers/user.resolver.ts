@@ -4,7 +4,28 @@ import md5 from "md5";
 
 export const resolversUser = {
     Query: {
+        getUser: async (_, args) => {
+            const { token } = args;
 
+            const existUser = await User.findOne({
+                token: token,
+                deleted: false
+            });
+            if (!existUser) {
+                return {
+                    code: "error",
+                    message: "Token không hợp lệ!"
+                };
+            }
+            return {
+                code: "success",
+                message: "Thành công!",
+                id: existUser.id,
+                token: existUser.token,
+                fullName: existUser.fullName,
+                email: existUser.email,
+            }
+        }
     },
     Mutation: {
         registerUser: async (_, args) => {
@@ -39,6 +60,37 @@ export const resolversUser = {
                 ...dataUser
             };
         },
+
+        loginUser: async (_, args) => {
+            const { email, password } = args.user;
+            const existUser = await User.findOne({
+                email: email,
+                deleted: false
+            });
+
+            if (!existUser) {
+                return {
+                    code: "error",
+                    message: "Email không tồn tại trong hệ thống!"
+                };
+            }
+
+            if (md5(password) != existUser.password) {
+                return {
+                    code: "error",
+                    message: "Sai mật khẩu!"
+                };
+            }
+
+            return {
+                code: "success",
+                message: "Đăng nhập thành công!",
+                id: existUser.id,
+                token: existUser.token,
+                fullName: existUser.fullName,
+                email: existUser.email,
+            }
+        }
 
     }
 };
