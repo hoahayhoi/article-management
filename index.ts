@@ -21,6 +21,8 @@ const startServer = async () => {
         typeDefs: typeDefs,
         resolvers: resolvers,
 
+        introspection: true,
+
         context: ({ req }) => {
             return {
                 req: req
